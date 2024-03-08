@@ -32,8 +32,8 @@
         <script src="js/labels.js"></script>
         <script src="data/Dpartement_Sarthe_1.js"></script>
         <script src="data/Iris_LeMans_2.js"></script>
-        <script src="data/Communes_3.js"></script>
-        <script src="data/Communesdesserviesaidealimentaire_4.js"></script>
+        <script src="data/Communesdesserviesaidealimentaire_3.js"></script>
+        <script src="data/Communes_4.js"></script>
         <script src="data/EPCI_5.js"></script>
         <script src="data/Risquedeprcaritalimentaire_6.js"></script>
         <script src="data/Tauxdepauvret_2020_7.js"></script>
@@ -41,17 +41,37 @@
         <script src="data/SecoursCatholique_9.js"></script>
         <script src="data/RestoduCoeur_10.js"></script>
         <script src="data/Associationspartenaires_BA72_11.js"></script>
-        <script src="data/Tonnage_assospartenaires_2023_12.js"></script>
-        <script src="data/Usagers_assopartenaires_2023_13.js"></script>
-        <script src="data/Tonnage_assospartenaires_2022_14.js"></script>
-        <script src="data/Usagers_assospartenaires_2022_15.js"></script>
+        <script src="data/Tonnage_assos_2023_12.js"></script>
+        <script src="data/Personnesaccueillies_assos_2023_13.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[47.5828260055142,-0.6615871668807699],[48.5751344068237,1.8293821827000007]]);
+        }).fitBounds([[47.71661232571238,-0.6617606582828084],[48.48042312587541,1.7140811496977524]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        document.querySelector(".leaflet-popup-pane").addEventListener("load", function(event) {
+          var tagName = event.target.tagName,
+            popup = map._popup;
+          // Also check if flag is already set.
+          if (tagName === "IMG" && popup && !popup._updated) {
+            popup._updated = true; // Set flag to prevent looping.
+            popup.update();
+          }
+        }, true);
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
@@ -71,19 +91,23 @@
         function pop_Dpartement_Sarthe_1(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="id"colspan="2"><strong>id</strong><br />' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['dep'] !== null ? autolinker.link(feature.properties['dep'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="dep"colspan="2"><strong>dep</strong><br />' + (feature.properties['dep'] !== null ? autolinker.link(feature.properties['dep'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['reg'] !== null ? autolinker.link(feature.properties['reg'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="reg"colspan="2"><strong>reg</strong><br />' + (feature.properties['reg'] !== null ? autolinker.link(feature.properties['reg'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['libgeo'] !== null ? autolinker.link(feature.properties['libgeo'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="libgeo"colspan="2"><strong>Département</strong><br />' + (feature.properties['libgeo'] !== null ? autolinker.link(feature.properties['libgeo'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
         function style_Dpartement_Sarthe_1_0() {
@@ -116,13 +140,17 @@
         function pop_Iris_LeMans_2(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>Iris</strong><br />' + (feature.properties['iris_name_u'] !== null ? autolinker.link(feature.properties['iris_name_u'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="iris_name_u"colspan="2"><strong>Iris</strong><br />' + (feature.properties['iris_name_u'] !== null ? autolinker.link(feature.properties['iris_name_u'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Type </strong><br />' + (feature.properties['iris_type'] !== null ? autolinker.link(feature.properties['iris_type'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="iris_type"colspan="2"><strong>Type </strong><br />' + (feature.properties['iris_type'] !== null ? autolinker.link(feature.properties['iris_type'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
         function style_Iris_LeMans_2_0() {
@@ -153,71 +181,25 @@
             style: style_Iris_LeMans_2_0,
         });
         bounds_group.addLayer(layer_Iris_LeMans_2);
-        function pop_Communes_3(feature, layer) {
+        function pop_Communesdesserviesaidealimentaire_3(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>Commune</strong><br />' + (feature.properties['libgeo'] !== null ? autolinker.link(feature.properties['libgeo'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Communes_a"colspan="2"><strong>Commune desservie</strong><br />' + (feature.properties['Communes_a'] !== null ? autolinker.link(feature.properties['Communes_a'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Population</strong><br />' + (feature.properties['Population'] !== null ? autolinker.link(feature.properties['Population'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Niveau</strong><br />' + (feature.properties['Niveau'] !== null ? autolinker.link(feature.properties['Niveau'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['tres_elevee'] !== null ? autolinker.link(feature.properties['tres_elevee'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['tres_faible'] !== null ? autolinker.link(feature.properties['tres_faible'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Population"colspan="2"><strong>Population</strong><br />' + (feature.properties['Population'] !== null ? autolinker.link(feature.properties['Population'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
-        function style_Communes_3_0() {
+        function style_Communesdesserviesaidealimentaire_3_0() {
             return {
-                pane: 'pane_Communes_3',
-                opacity: 1,
-                color: 'rgba(150,148,148,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(125,139,143,0.0)',
-                interactive: true,
-            }
-        }
-        map.createPane('pane_Communes_3');
-        map.getPane('pane_Communes_3').style.zIndex = 403;
-        map.getPane('pane_Communes_3').style['mix-blend-mode'] = 'normal';
-        var layer_Communes_3 = new L.geoJson(json_Communes_3, {
-            attribution: '',
-            interactive: true,
-            dataVar: 'json_Communes_3',
-            layerName: 'layer_Communes_3',
-            pane: 'pane_Communes_3',
-            onEachFeature: pop_Communes_3,
-            style: style_Communes_3_0,
-        });
-        bounds_group.addLayer(layer_Communes_3);
-        map.addLayer(layer_Communes_3);
-        function pop_Communesdesserviesaidealimentaire_4(feature, layer) {
-            var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2"><strong>Commune desservie</strong><br />' + (feature.properties['Communes_a'] !== null ? autolinker.link(feature.properties['Communes_a'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Population</strong><br />' + (feature.properties['Population'] !== null ? autolinker.link(feature.properties['Population'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            layer.bindPopup(popupContent, {maxHeight: 400});
-        }
-
-        function style_Communesdesserviesaidealimentaire_4_0() {
-            return {
-                pane: 'pane_Communesdesserviesaidealimentaire_4',
+                pane: 'pane_Communesdesserviesaidealimentaire_3',
                 opacity: 1,
                 color: 'rgba(72,72,72,0.8)',
                 dashArray: '',
@@ -230,30 +212,88 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_Communesdesserviesaidealimentaire_4');
-        map.getPane('pane_Communesdesserviesaidealimentaire_4').style.zIndex = 404;
-        map.getPane('pane_Communesdesserviesaidealimentaire_4').style['mix-blend-mode'] = 'normal';
-        var layer_Communesdesserviesaidealimentaire_4 = new L.geoJson(json_Communesdesserviesaidealimentaire_4, {
+        map.createPane('pane_Communesdesserviesaidealimentaire_3');
+        map.getPane('pane_Communesdesserviesaidealimentaire_3').style.zIndex = 403;
+        map.getPane('pane_Communesdesserviesaidealimentaire_3').style['mix-blend-mode'] = 'normal';
+        var layer_Communesdesserviesaidealimentaire_3 = new L.geoJson(json_Communesdesserviesaidealimentaire_3, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_Communesdesserviesaidealimentaire_4',
-            layerName: 'layer_Communesdesserviesaidealimentaire_4',
-            pane: 'pane_Communesdesserviesaidealimentaire_4',
-            onEachFeature: pop_Communesdesserviesaidealimentaire_4,
-            style: style_Communesdesserviesaidealimentaire_4_0,
+            dataVar: 'json_Communesdesserviesaidealimentaire_3',
+            layerName: 'layer_Communesdesserviesaidealimentaire_3',
+            pane: 'pane_Communesdesserviesaidealimentaire_3',
+            onEachFeature: pop_Communesdesserviesaidealimentaire_3,
+            style: style_Communesdesserviesaidealimentaire_3_0,
         });
-        bounds_group.addLayer(layer_Communesdesserviesaidealimentaire_4);
-        map.addLayer(layer_Communesdesserviesaidealimentaire_4);
-        function pop_EPCI_5(feature, layer) {
+        bounds_group.addLayer(layer_Communesdesserviesaidealimentaire_3);
+        map.addLayer(layer_Communesdesserviesaidealimentaire_3);
+        function pop_Communes_4(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>Population EPCI</strong><br />' + (feature.properties['POPULATION'] !== null ? autolinker.link(feature.properties['POPULATION'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="libgeo"colspan="2"><strong>Commune</strong><br />' + (feature.properties['libgeo'] !== null ? autolinker.link(feature.properties['libgeo'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>EPCI</strong><br />' + (feature.properties['SOCIALE'] !== null ? autolinker.link(feature.properties['SOCIALE'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Population"colspan="2"><strong>Population</strong><br />' + (feature.properties['Population'] !== null ? autolinker.link(feature.properties['Population'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Niveau"colspan="2"><strong>Niveau</strong><br />' + (feature.properties['Niveau'] !== null ? autolinker.link(feature.properties['Niveau'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tres_elevee'] !== null ? autolinker.link(feature.properties['tres_elevee'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tres_faible'] !== null ? autolinker.link(feature.properties['tres_faible'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_Communes_4_0() {
+            return {
+                pane: 'pane_Communes_4',
+                opacity: 1,
+                color: 'rgba(150,148,148,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,139,143,0.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Communes_4');
+        map.getPane('pane_Communes_4').style.zIndex = 404;
+        map.getPane('pane_Communes_4').style['mix-blend-mode'] = 'normal';
+        var layer_Communes_4 = new L.geoJson(json_Communes_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Communes_4',
+            layerName: 'layer_Communes_4',
+            pane: 'pane_Communes_4',
+            onEachFeature: pop_Communes_4,
+            style: style_Communes_4_0,
+        });
+        bounds_group.addLayer(layer_Communes_4);
+        map.addLayer(layer_Communes_4);
+        function pop_EPCI_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="POPULATION"colspan="2"><strong>Population EPCI</strong><br />' + (feature.properties['POPULATION'] !== null ? autolinker.link(feature.properties['POPULATION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="SOCIALE"colspan="2"><strong>EPCI</strong><br />' + (feature.properties['SOCIALE'] !== null ? autolinker.link(feature.properties['SOCIALE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
         function style_EPCI_5_0() {
@@ -288,13 +328,13 @@
         function pop_Risquedeprcaritalimentaire_6(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>Commune</strong><br />' + (feature.properties['libgeo'] !== null ? autolinker.link(feature.properties['libgeo'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="libgeo"colspan="2"><strong>Commune</strong><br />' + (feature.properties['libgeo'] !== null ? autolinker.link(feature.properties['libgeo'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Population</strong><br />' + (feature.properties['Population'] !== null ? autolinker.link(feature.properties['Population'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Population"colspan="2"><strong>Population</strong><br />' + (feature.properties['Population'] !== null ? autolinker.link(feature.properties['Population'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Niveau de risque de précarité alimentaire</strong><br />' + (feature.properties['Niveau'] !== null ? autolinker.link(feature.properties['Niveau'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Niveau"colspan="2"><strong>Niveau de risque de précarité alimentaire</strong><br />' + (feature.properties['Niveau'] !== null ? autolinker.link(feature.properties['Niveau'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['tres_eleve'] !== null ? autolinker.link(feature.properties['tres_eleve'].toLocaleString()) : '') + '</td>\
@@ -304,6 +344,10 @@
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
         function style_Risquedeprcaritalimentaire_6_0(feature) {
@@ -401,16 +445,20 @@
         function pop_Tauxdepauvret_2020_7(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>EPCI</strong><br />' + (feature.properties['NOM_EPCI'] !== null ? autolinker.link(feature.properties['NOM_EPCI'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="NOM_EPCI"colspan="2"><strong>EPCI</strong><br />' + (feature.properties['NOM_EPCI'] !== null ? autolinker.link(feature.properties['NOM_EPCI'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Taux de pauvreté (2020)</strong><br />' + (feature.properties['Taux de pa'] !== null ? autolinker.link(feature.properties['Taux de pa'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Taux de pa"colspan="2"><strong>Taux de pauvreté (2020)</strong><br />' + (feature.properties['Taux de pa'] !== null ? autolinker.link(feature.properties['Taux de pa'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Population EPCI</strong><br />' + (feature.properties['POPULATION'] !== null ? autolinker.link(feature.properties['POPULATION'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="POPULATION"colspan="2"><strong>Population EPCI</strong><br />' + (feature.properties['POPULATION'] !== null ? autolinker.link(feature.properties['POPULATION'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
         function style_Tauxdepauvret_2020_7_0(feature) {
@@ -506,19 +554,23 @@
         function pop_SecoursPopulaire_8(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>Nom</strong><br />' + (feature.properties['Nom'] !== null ? autolinker.link(feature.properties['Nom'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Nom"colspan="2"><strong>Nom</strong><br />' + (feature.properties['Nom'] !== null ? autolinker.link(feature.properties['Nom'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Adresse'] !== null ? autolinker.link(feature.properties['Adresse'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Adresse"colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Adresse'] !== null ? autolinker.link(feature.properties['Adresse'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Tel</strong><br />' + (feature.properties['Téléphon'] !== null ? autolinker.link(feature.properties['Téléphon'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Téléphon"colspan="2"><strong>Tel</strong><br />' + (feature.properties['Téléphon'] !== null ? autolinker.link(feature.properties['Téléphon'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Site Web</strong><br />' + (feature.properties['Site Web'] !== null ? autolinker.link(feature.properties['Site Web'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Site Web"colspan="2"><strong>Site Web</strong><br />' + (feature.properties['Site Web'] !== null ? autolinker.link(feature.properties['Site Web'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
         function style_SecoursPopulaire_8_0() {
@@ -555,19 +607,23 @@
         function pop_SecoursCatholique_9(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>Nom</strong><br />' + (feature.properties['Nom'] !== null ? autolinker.link(feature.properties['Nom'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Nom"colspan="2"><strong>Nom</strong><br />' + (feature.properties['Nom'] !== null ? autolinker.link(feature.properties['Nom'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Adresse'] !== null ? autolinker.link(feature.properties['Adresse'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Adresse"colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Adresse'] !== null ? autolinker.link(feature.properties['Adresse'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Tel</strong><br />' + (feature.properties['Téléphon'] !== null ? autolinker.link(feature.properties['Téléphon'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Téléphon"colspan="2"><strong>Tel</strong><br />' + (feature.properties['Téléphon'] !== null ? autolinker.link(feature.properties['Téléphon'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Site Web</strong><br />' + (feature.properties['Site'] !== null ? autolinker.link(feature.properties['Site'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Site"colspan="2"><strong>Site Web</strong><br />' + (feature.properties['Site'] !== null ? autolinker.link(feature.properties['Site'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
         function style_SecoursCatholique_9_0() {
@@ -604,22 +660,26 @@
         function pop_RestoduCoeur_10(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>Nom</strong><br />' + (feature.properties['Nom'] !== null ? autolinker.link(feature.properties['Nom'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Nom"colspan="2"><strong>Nom</strong><br />' + (feature.properties['Nom'] !== null ? autolinker.link(feature.properties['Nom'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Adresse'] !== null ? autolinker.link(feature.properties['Adresse'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Adresse"colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Adresse'] !== null ? autolinker.link(feature.properties['Adresse'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Tel</strong><br />' + (feature.properties['Tel'] !== null ? autolinker.link(feature.properties['Tel'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Tel"colspan="2"><strong>Tel</strong><br />' + (feature.properties['Tel'] !== null ? autolinker.link(feature.properties['Tel'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Mail</strong><br />' + (feature.properties['Mail'] !== null ? autolinker.link(feature.properties['Mail'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Mail"colspan="2"><strong>Mail</strong><br />' + (feature.properties['Mail'] !== null ? autolinker.link(feature.properties['Mail'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Services</strong><br />' + (feature.properties['Services'] !== null ? autolinker.link(feature.properties['Services'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Services"colspan="2"><strong>Services</strong><br />' + (feature.properties['Services'] !== null ? autolinker.link(feature.properties['Services'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
         function style_RestoduCoeur_10_0() {
@@ -656,37 +716,41 @@
         function pop_Associationspartenaires_BA72_11(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>Association</strong><br />' + (feature.properties['Associatio'] !== null ? autolinker.link(feature.properties['Associatio'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Associatio"colspan="2"><strong>Association</strong><br />' + (feature.properties['Associatio'] !== null ? autolinker.link(feature.properties['Associatio'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Adresse'] !== null ? autolinker.link(feature.properties['Adresse'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Distributi"colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Distributi'] !== null ? autolinker.link(feature.properties['Distributi'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Communes desservies</strong><br />' + (feature.properties['Communes_d'] !== null ? autolinker.link(feature.properties['Communes_d'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Communes_d"colspan="2"><strong>Communes desservies</strong><br />' + (feature.properties['Communes_d'] !== null ? autolinker.link(feature.properties['Communes_d'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Tonnage 2022</strong><br />' + (feature.properties['Tonnage_20'] !== null ? autolinker.link(feature.properties['Tonnage_20'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Com-suite"colspan="2"><strong>Com-suite</strong><br />' + (feature.properties['Com-suite'] !== null ? autolinker.link(feature.properties['Com-suite'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Tonnage 2023</strong><br />' + (feature.properties['Tonnage 20'] !== null ? autolinker.link(feature.properties['Tonnage 20'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Tonnage-20"colspan="2"><strong>Tonnage 2022</strong><br />' + (feature.properties['Tonnage-20'] !== null ? autolinker.link(feature.properties['Tonnage-20'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Personnes accueillies</strong><br />' + (feature.properties['Personnes_'] !== null ? autolinker.link(feature.properties['Personnes_'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Tonnage-_1"colspan="2"><strong>Tonnage 2023</strong><br />' + (feature.properties['Tonnage-_1'] !== null ? autolinker.link(feature.properties['Tonnage-_1'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Type d\'aide</strong><br />' + (feature.properties['Type_daide'] !== null ? autolinker.link(feature.properties['Type_daide'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Personnes_"colspan="2"><strong>Personnes accueillies</strong><br />' + (feature.properties['Personnes_'] !== null ? autolinker.link(feature.properties['Personnes_'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Fréquence</strong><br />' + (feature.properties['Fréquence'] !== null ? autolinker.link(feature.properties['Fréquence'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Type_daide"colspan="2"><strong>Type d\'aide</strong><br />' + (feature.properties['Type_daide'] !== null ? autolinker.link(feature.properties['Type_daide'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Distribution</strong><br />' + (feature.properties['Distributi'] !== null ? autolinker.link(feature.properties['Distributi'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Ditributio"colspan="2"><strong>Jours</strong><br />' + (feature.properties['Ditributio'] !== null ? autolinker.link(feature.properties['Ditributio'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['Com_suite'] !== null ? autolinker.link(feature.properties['Com_suite'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Fréquence"colspan="2"><strong>Fréquence</strong><br />' + (feature.properties['Fréquence'] !== null ? autolinker.link(feature.properties['Fréquence'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
         function style_Associationspartenaires_BA72_11_0() {
@@ -725,40 +789,50 @@
         });
         bounds_group.addLayer(layer_Associationspartenaires_BA72_11);
         map.addLayer(layer_Associationspartenaires_BA72_11);
-        function pop_Tonnage_assospartenaires_2023_12(feature, layer) {
+        function pop_Tonnage_assos_2023_12(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>Association</strong><br />' + (feature.properties['Associatio'] !== null ? autolinker.link(feature.properties['Associatio'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Associatio"colspan="2"><strong>Association</strong><br />' + (feature.properties['Associatio'] !== null ? autolinker.link(feature.properties['Associatio'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Distributi'] !== null ? autolinker.link(feature.properties['Distributi'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Adresse"colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Adresse'] !== null ? autolinker.link(feature.properties['Adresse'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Communes desservies</strong><br />' + (feature.properties['Communes_d'] !== null ? autolinker.link(feature.properties['Communes_d'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Communes"colspan="2"><strong>Communes desservies</strong><br />' + (feature.properties['Communes'] !== null ? autolinker.link(feature.properties['Communes'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['Com-suite'] !== null ? autolinker.link(feature.properties['Com-suite'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Com-suite"colspan="2"><strong>Com-suite</strong><br />' + (feature.properties['Com-suite'] !== null ? autolinker.link(feature.properties['Com-suite'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Jours </strong><br />' + (feature.properties['Jours_dist'] !== null ? autolinker.link(feature.properties['Jours_dist'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Tonnage22"colspan="2"><strong>Tonnage 2022</strong><br />' + (feature.properties['Tonnage22'] !== null ? autolinker.link(feature.properties['Tonnage22'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Tonnage 2023</strong><br />' + (feature.properties['Tonnage-20'] !== null ? autolinker.link(feature.properties['Tonnage-20'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Tonnage23"colspan="2"><strong>Tonnage 2023</strong><br />' + (feature.properties['Tonnage23'] !== null ? autolinker.link(feature.properties['Tonnage23'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Personnes accueillies</strong><br />' + (feature.properties['Nombre_usa'] !== null ? autolinker.link(feature.properties['Nombre_usa'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="NbPersonne"colspan="2"><strong>Personnes accueillies</strong><br />' + (feature.properties['NbPersonne'] !== null ? autolinker.link(feature.properties['NbPersonne'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Type d\'aide</strong><br />' + (feature.properties['Type_daide'] !== null ? autolinker.link(feature.properties['Type_daide'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Type_daide"colspan="2"><strong>Type d\'aide</strong><br />' + (feature.properties['Type_daide'] !== null ? autolinker.link(feature.properties['Type_daide'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Jours"colspan="2"><strong>Jours</strong><br />' + (feature.properties['Jours'] !== null ? autolinker.link(feature.properties['Jours'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Fréquence"colspan="2"><strong>Fréquence</strong><br />' + (feature.properties['Fréquence'] !== null ? autolinker.link(feature.properties['Fréquence'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
-        function style_Tonnage_assospartenaires_2023_12_0(feature) {
-            if (feature.properties['Tonnage-20'] >= 28.000000 && feature.properties['Tonnage-20'] <= 5000.000000 ) {
+        function style_Tonnage_assos_2023_12_0(feature) {
+            if (feature.properties['Tonnage23'] >= 28.000000 && feature.properties['Tonnage23'] <= 5000.000000 ) {
                 return {
-                pane: 'pane_Tonnage_assospartenaires_2023_12',
+                pane: 'pane_Tonnage_assos_2023_12',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -772,9 +846,9 @@
                 interactive: true,
             }
             }
-            if (feature.properties['Tonnage-20'] >= 5000.000000 && feature.properties['Tonnage-20'] <= 15000.000000 ) {
+            if (feature.properties['Tonnage23'] >= 5000.000000 && feature.properties['Tonnage23'] <= 15000.000000 ) {
                 return {
-                pane: 'pane_Tonnage_assospartenaires_2023_12',
+                pane: 'pane_Tonnage_assos_2023_12',
                 radius: 6.5,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -788,9 +862,9 @@
                 interactive: true,
             }
             }
-            if (feature.properties['Tonnage-20'] >= 15000.000000 && feature.properties['Tonnage-20'] <= 35000.000000 ) {
+            if (feature.properties['Tonnage23'] >= 15000.000000 && feature.properties['Tonnage23'] <= 35000.000000 ) {
                 return {
-                pane: 'pane_Tonnage_assospartenaires_2023_12',
+                pane: 'pane_Tonnage_assos_2023_12',
                 radius: 9.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -804,9 +878,9 @@
                 interactive: true,
             }
             }
-            if (feature.properties['Tonnage-20'] >= 35000.000000 && feature.properties['Tonnage-20'] <= 105000.000000 ) {
+            if (feature.properties['Tonnage23'] >= 35000.000000 && feature.properties['Tonnage23'] <= 105000.000000 ) {
                 return {
-                pane: 'pane_Tonnage_assospartenaires_2023_12',
+                pane: 'pane_Tonnage_assos_2023_12',
                 radius: 10.4,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -820,9 +894,9 @@
                 interactive: true,
             }
             }
-            if (feature.properties['Tonnage-20'] >= 105000.000000 && feature.properties['Tonnage-20'] <= 140000.000000 ) {
+            if (feature.properties['Tonnage23'] >= 105000.000000 && feature.properties['Tonnage23'] <= 140000.000000 ) {
                 return {
-                pane: 'pane_Tonnage_assospartenaires_2023_12',
+                pane: 'pane_Tonnage_assos_2023_12',
                 radius: 16.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -837,59 +911,72 @@
             }
             }
         }
-        map.createPane('pane_Tonnage_assospartenaires_2023_12');
-        map.getPane('pane_Tonnage_assospartenaires_2023_12').style.zIndex = 412;
-        map.getPane('pane_Tonnage_assospartenaires_2023_12').style['mix-blend-mode'] = 'normal';
-        var layer_Tonnage_assospartenaires_2023_12 = new L.geoJson(json_Tonnage_assospartenaires_2023_12, {
+        map.createPane('pane_Tonnage_assos_2023_12');
+        map.getPane('pane_Tonnage_assos_2023_12').style.zIndex = 412;
+        map.getPane('pane_Tonnage_assos_2023_12').style['mix-blend-mode'] = 'normal';
+        var layer_Tonnage_assos_2023_12 = new L.geoJson(json_Tonnage_assos_2023_12, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_Tonnage_assospartenaires_2023_12',
-            layerName: 'layer_Tonnage_assospartenaires_2023_12',
-            pane: 'pane_Tonnage_assospartenaires_2023_12',
-            onEachFeature: pop_Tonnage_assospartenaires_2023_12,
+            dataVar: 'json_Tonnage_assos_2023_12',
+            layerName: 'layer_Tonnage_assos_2023_12',
+            pane: 'pane_Tonnage_assos_2023_12',
+            onEachFeature: pop_Tonnage_assos_2023_12,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_Tonnage_assospartenaires_2023_12_0(feature));
+                return L.circleMarker(latlng, style_Tonnage_assos_2023_12_0(feature));
             },
         });
-        bounds_group.addLayer(layer_Tonnage_assospartenaires_2023_12);
-        function pop_Usagers_assopartenaires_2023_13(feature, layer) {
+        bounds_group.addLayer(layer_Tonnage_assos_2023_12);
+        function pop_Personnesaccueillies_assos_2023_13(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2"><strong>Association</strong><br />' + (feature.properties['Associatio'] !== null ? autolinker.link(feature.properties['Associatio'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Associatio"colspan="2"><strong>Association</strong><br />' + (feature.properties['Associatio'] !== null ? autolinker.link(feature.properties['Associatio'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Distributi'] !== null ? autolinker.link(feature.properties['Distributi'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Adresse"colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Adresse'] !== null ? autolinker.link(feature.properties['Adresse'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Communes desservies</strong><br />' + (feature.properties['Communes_d'] !== null ? autolinker.link(feature.properties['Communes_d'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Communes"colspan="2"><strong>Communes desservies</strong><br />' + (feature.properties['Communes'] !== null ? autolinker.link(feature.properties['Communes'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['Com-suite'] !== null ? autolinker.link(feature.properties['Com-suite'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Com-suite"colspan="2"><strong>Com-suite</strong><br />' + (feature.properties['Com-suite'] !== null ? autolinker.link(feature.properties['Com-suite'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Jours </strong><br />' + (feature.properties['Jours_dist'] !== null ? autolinker.link(feature.properties['Jours_dist'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Tonnage22"colspan="2"><strong>Tonnage 2022</strong><br />' + (feature.properties['Tonnage22'] !== null ? autolinker.link(feature.properties['Tonnage22'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Tonnage 2023</strong><br />' + (feature.properties['Tonnage-20'] !== null ? autolinker.link(feature.properties['Tonnage-20'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Tonnage23"colspan="2"><strong>Tonnage 2023</strong><br />' + (feature.properties['Tonnage23'] !== null ? autolinker.link(feature.properties['Tonnage23'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Personnes accueillies</strong><br />' + (feature.properties['Nombre_dus'] !== null ? autolinker.link(feature.properties['Nombre_dus'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="NbPersonne"colspan="2"><strong>Personnes accueillies 2022</strong><br />' + (feature.properties['NbPersonne'] !== null ? autolinker.link(feature.properties['NbPersonne'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>Type d\'aide</strong><br />' + (feature.properties['Type_daide'] !== null ? autolinker.link(feature.properties['Type_daide'].toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="NbPerson_1"colspan="2"><strong>Personnes accueillies 2023</strong><br />' + (feature.properties['NbPerson_1'] !== null ? autolinker.link(feature.properties['NbPerson_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Type_daide"colspan="2"><strong>Type d\'aide</strong><br />' + (feature.properties['Type_daide'] !== null ? autolinker.link(feature.properties['Type_daide'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Jours"colspan="2"><strong>Jours</strong><br />' + (feature.properties['Jours'] !== null ? autolinker.link(feature.properties['Jours'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Fréquence"colspan="2"><strong>Fréquence</strong><br />' + (feature.properties['Fréquence'] !== null ? autolinker.link(feature.properties['Fréquence'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
         }
 
-        function style_Usagers_assopartenaires_2023_13_0(feature) {
-            if (feature.properties['Nombre_dus'] >= 0.000000 && feature.properties['Nombre_dus'] <= 82.000000 ) {
+        function style_Personnesaccueillies_assos_2023_13_0(feature) {
+            if (feature.properties['NbPerson_1'] >= 0.000000 && feature.properties['NbPerson_1'] <= 82.000000 ) {
                 return {
-                pane: 'pane_Usagers_assopartenaires_2023_13',
+                pane: 'pane_Personnesaccueillies_assos_2023_13',
                 radius: 4.4,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -903,9 +990,9 @@
                 interactive: true,
             }
             }
-            if (feature.properties['Nombre_dus'] >= 82.000000 && feature.properties['Nombre_dus'] <= 311.000000 ) {
+            if (feature.properties['NbPerson_1'] >= 82.000000 && feature.properties['NbPerson_1'] <= 311.000000 ) {
                 return {
-                pane: 'pane_Usagers_assopartenaires_2023_13',
+                pane: 'pane_Personnesaccueillies_assos_2023_13',
                 radius: 6.3,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -919,9 +1006,9 @@
                 interactive: true,
             }
             }
-            if (feature.properties['Nombre_dus'] >= 311.000000 && feature.properties['Nombre_dus'] <= 798.000000 ) {
+            if (feature.properties['NbPerson_1'] >= 311.000000 && feature.properties['NbPerson_1'] <= 798.000000 ) {
                 return {
-                pane: 'pane_Usagers_assopartenaires_2023_13',
+                pane: 'pane_Personnesaccueillies_assos_2023_13',
                 radius: 8.2,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -935,9 +1022,9 @@
                 interactive: true,
             }
             }
-            if (feature.properties['Nombre_dus'] >= 798.000000 && feature.properties['Nombre_dus'] <= 1596.000000 ) {
+            if (feature.properties['NbPerson_1'] >= 798.000000 && feature.properties['NbPerson_1'] <= 1596.000000 ) {
                 return {
-                pane: 'pane_Usagers_assopartenaires_2023_13',
+                pane: 'pane_Personnesaccueillies_assos_2023_13',
                 radius: 10.1,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -951,9 +1038,9 @@
                 interactive: true,
             }
             }
-            if (feature.properties['Nombre_dus'] >= 1596.000000 && feature.properties['Nombre_dus'] <= 2231.000000 ) {
+            if (feature.properties['NbPerson_1'] >= 1596.000000 && feature.properties['NbPerson_1'] <= 2231.000000 ) {
                 return {
-                pane: 'pane_Usagers_assopartenaires_2023_13',
+                pane: 'pane_Personnesaccueillies_assos_2023_13',
                 radius: 12.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -968,286 +1055,27 @@
             }
             }
         }
-        map.createPane('pane_Usagers_assopartenaires_2023_13');
-        map.getPane('pane_Usagers_assopartenaires_2023_13').style.zIndex = 413;
-        map.getPane('pane_Usagers_assopartenaires_2023_13').style['mix-blend-mode'] = 'normal';
-        var layer_Usagers_assopartenaires_2023_13 = new L.geoJson(json_Usagers_assopartenaires_2023_13, {
+        map.createPane('pane_Personnesaccueillies_assos_2023_13');
+        map.getPane('pane_Personnesaccueillies_assos_2023_13').style.zIndex = 413;
+        map.getPane('pane_Personnesaccueillies_assos_2023_13').style['mix-blend-mode'] = 'normal';
+        var layer_Personnesaccueillies_assos_2023_13 = new L.geoJson(json_Personnesaccueillies_assos_2023_13, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_Usagers_assopartenaires_2023_13',
-            layerName: 'layer_Usagers_assopartenaires_2023_13',
-            pane: 'pane_Usagers_assopartenaires_2023_13',
-            onEachFeature: pop_Usagers_assopartenaires_2023_13,
+            dataVar: 'json_Personnesaccueillies_assos_2023_13',
+            layerName: 'layer_Personnesaccueillies_assos_2023_13',
+            pane: 'pane_Personnesaccueillies_assos_2023_13',
+            onEachFeature: pop_Personnesaccueillies_assos_2023_13,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_Usagers_assopartenaires_2023_13_0(feature));
+                return L.circleMarker(latlng, style_Personnesaccueillies_assos_2023_13_0(feature));
             },
         });
-        bounds_group.addLayer(layer_Usagers_assopartenaires_2023_13);
-        function pop_Tonnage_assospartenaires_2022_14(feature, layer) {
-            var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2"><strong>Association</strong><br />' + (feature.properties['Associatio'] !== null ? autolinker.link(feature.properties['Associatio'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Distributi'] !== null ? autolinker.link(feature.properties['Distributi'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Jours </strong><br />' + (feature.properties['Jours_dist'] !== null ? autolinker.link(feature.properties['Jours_dist'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Tonnage</strong><br />' + (feature.properties['Tonnage'] !== null ? autolinker.link(feature.properties['Tonnage'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Personnes accueillies</strong><br />' + (feature.properties['Nombre_dus'] !== null ? autolinker.link(feature.properties['Nombre_dus'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Type d\'aide</strong><br />' + (feature.properties['Type_daide'] !== null ? autolinker.link(feature.properties['Type_daide'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Communes desservies</strong><br />' + (feature.properties['Communes d'] !== null ? autolinker.link(feature.properties['Communes d'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            layer.bindPopup(popupContent, {maxHeight: 400});
-        }
-
-        function style_Tonnage_assospartenaires_2022_14_0(feature) {
-            if (feature.properties['Tonnage'] >= 28.000000 && feature.properties['Tonnage'] <= 5000.000000 ) {
-                return {
-                pane: 'pane_Tonnage_assospartenaires_2022_14',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 2.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(253,191,111,1.0)',
-                interactive: true,
-            }
-            }
-            if (feature.properties['Tonnage'] >= 5000.000000 && feature.properties['Tonnage'] <= 15000.000000 ) {
-                return {
-                pane: 'pane_Tonnage_assospartenaires_2022_14',
-                radius: 6.5,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 2.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(255,127,0,1.0)',
-                interactive: true,
-            }
-            }
-            if (feature.properties['Tonnage'] >= 15000.000000 && feature.properties['Tonnage'] <= 35000.000000 ) {
-                return {
-                pane: 'pane_Tonnage_assospartenaires_2022_14',
-                radius: 9.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 2.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(255,80,80,1.0)',
-                interactive: true,
-            }
-            }
-            if (feature.properties['Tonnage'] >= 35000.000000 && feature.properties['Tonnage'] <= 105000.000000 ) {
-                return {
-                pane: 'pane_Tonnage_assospartenaires_2022_14',
-                radius: 10.4,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 2.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(255,41,0,1.0)',
-                interactive: true,
-            }
-            }
-            if (feature.properties['Tonnage'] >= 105000.000000 && feature.properties['Tonnage'] <= 130000.000000 ) {
-                return {
-                pane: 'pane_Tonnage_assospartenaires_2022_14',
-                radius: 16.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 2.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(200,0,0,1.0)',
-                interactive: true,
-            }
-            }
-        }
-        map.createPane('pane_Tonnage_assospartenaires_2022_14');
-        map.getPane('pane_Tonnage_assospartenaires_2022_14').style.zIndex = 414;
-        map.getPane('pane_Tonnage_assospartenaires_2022_14').style['mix-blend-mode'] = 'normal';
-        var layer_Tonnage_assospartenaires_2022_14 = new L.geoJson(json_Tonnage_assospartenaires_2022_14, {
-            attribution: '',
-            interactive: true,
-            dataVar: 'json_Tonnage_assospartenaires_2022_14',
-            layerName: 'layer_Tonnage_assospartenaires_2022_14',
-            pane: 'pane_Tonnage_assospartenaires_2022_14',
-            onEachFeature: pop_Tonnage_assospartenaires_2022_14,
-            pointToLayer: function (feature, latlng) {
-                var context = {
-                    feature: feature,
-                    variables: {}
-                };
-                return L.circleMarker(latlng, style_Tonnage_assospartenaires_2022_14_0(feature));
-            },
-        });
-        bounds_group.addLayer(layer_Tonnage_assospartenaires_2022_14);
-        function pop_Usagers_assospartenaires_2022_15(feature, layer) {
-            var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2"><strong>Association</strong><br />' + (feature.properties['Associatio'] !== null ? autolinker.link(feature.properties['Associatio'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Adresse</strong><br />' + (feature.properties['Distributi'] !== null ? autolinker.link(feature.properties['Distributi'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Communes desservies</strong><br />' + (feature.properties['Communes_d'] !== null ? autolinker.link(feature.properties['Communes_d'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Jours </strong><br />' + (feature.properties['Jours_dist'] !== null ? autolinker.link(feature.properties['Jours_dist'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Tonnage</strong><br />' + (feature.properties['Tonnage'] !== null ? autolinker.link(feature.properties['Tonnage'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Personnes accueillies</strong><br />' + (feature.properties['Nombre_dus'] !== null ? autolinker.link(feature.properties['Nombre_dus'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Type d\'aide</strong><br />' + (feature.properties['Type_daide'] !== null ? autolinker.link(feature.properties['Type_daide'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['com_suite'] !== null ? autolinker.link(feature.properties['com_suite'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            layer.bindPopup(popupContent, {maxHeight: 400});
-        }
-
-        function style_Usagers_assospartenaires_2022_15_0(feature) {
-            if (feature.properties['Nombre_dus'] >= 0.000000 && feature.properties['Nombre_dus'] <= 82.000000 ) {
-                return {
-                pane: 'pane_Usagers_assospartenaires_2022_15',
-                radius: 4.4,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 2.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(220,249,33,1.0)',
-                interactive: true,
-            }
-            }
-            if (feature.properties['Nombre_dus'] >= 82.000000 && feature.properties['Nombre_dus'] <= 311.000000 ) {
-                return {
-                pane: 'pane_Usagers_assospartenaires_2022_15',
-                radius: 6.3,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 2.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(164,182,44,1.0)',
-                interactive: true,
-            }
-            }
-            if (feature.properties['Nombre_dus'] >= 311.000000 && feature.properties['Nombre_dus'] <= 798.000000 ) {
-                return {
-                pane: 'pane_Usagers_assospartenaires_2022_15',
-                radius: 8.2,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 2.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(120,136,12,1.0)',
-                interactive: true,
-            }
-            }
-            if (feature.properties['Nombre_dus'] >= 798.000000 && feature.properties['Nombre_dus'] <= 1596.000000 ) {
-                return {
-                pane: 'pane_Usagers_assospartenaires_2022_15',
-                radius: 10.1,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 2.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(86,169,41,1.0)',
-                interactive: true,
-            }
-            }
-            if (feature.properties['Nombre_dus'] >= 1596.000000 && feature.properties['Nombre_dus'] <= 2231.000000 ) {
-                return {
-                pane: 'pane_Usagers_assospartenaires_2022_15',
-                radius: 12.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(46,105,16,1.0)',
-                interactive: true,
-            }
-            }
-        }
-        map.createPane('pane_Usagers_assospartenaires_2022_15');
-        map.getPane('pane_Usagers_assospartenaires_2022_15').style.zIndex = 415;
-        map.getPane('pane_Usagers_assospartenaires_2022_15').style['mix-blend-mode'] = 'normal';
-        var layer_Usagers_assospartenaires_2022_15 = new L.geoJson(json_Usagers_assospartenaires_2022_15, {
-            attribution: '',
-            interactive: true,
-            dataVar: 'json_Usagers_assospartenaires_2022_15',
-            layerName: 'layer_Usagers_assospartenaires_2022_15',
-            pane: 'pane_Usagers_assospartenaires_2022_15',
-            onEachFeature: pop_Usagers_assospartenaires_2022_15,
-            pointToLayer: function (feature, latlng) {
-                var context = {
-                    feature: feature,
-                    variables: {}
-                };
-                return L.circleMarker(latlng, style_Usagers_assospartenaires_2022_15_0(feature));
-            },
-        });
-        bounds_group.addLayer(layer_Usagers_assospartenaires_2022_15);
+        bounds_group.addLayer(layer_Personnesaccueillies_assos_2023_13);
         var baseMaps = {};
-        L.control.layers(baseMaps,{'Usagers_assos partenaires_ 2022<br /><table><tr><td style="text-align: center;"><img src="legend/Usagers_assospartenaires_2022_15_1800.png" /></td><td>1 - 80</td></tr><tr><td style="text-align: center;"><img src="legend/Usagers_assospartenaires_2022_15_803101.png" /></td><td>80 - 310</td></tr><tr><td style="text-align: center;"><img src="legend/Usagers_assospartenaires_2022_15_3108002.png" /></td><td>310 - 800</td></tr><tr><td style="text-align: center;"><img src="legend/Usagers_assospartenaires_2022_15_80016003.png" /></td><td>800 - 1600</td></tr><tr><td style="text-align: center;"><img src="legend/Usagers_assospartenaires_2022_15_160022304.png" /></td><td>1600 - 2230</td></tr></table>': layer_Usagers_assospartenaires_2022_15,'Tonnage_assos partenaires_ 2022<br /><table><tr><td style="text-align: center;"><img src="legend/Tonnage_assospartenaires_2022_14_2850000.png" /></td><td>28 - 5000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assospartenaires_2022_14_5000150001.png" /></td><td>5000 - 15000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assospartenaires_2022_14_15000350002.png" /></td><td>15000 - 35000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assospartenaires_2022_14_350001050003.png" /></td><td>35000 - 105000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assospartenaires_2022_14_1050001300004.png" /></td><td>105000 - 130000</td></tr></table>': layer_Tonnage_assospartenaires_2022_14,'Usagers_asso partenaires_2023<br /><table><tr><td style="text-align: center;"><img src="legend/Usagers_assopartenaires_2023_13_1800.png" /></td><td>1 - 80</td></tr><tr><td style="text-align: center;"><img src="legend/Usagers_assopartenaires_2023_13_803101.png" /></td><td>80 - 310</td></tr><tr><td style="text-align: center;"><img src="legend/Usagers_assopartenaires_2023_13_3108002.png" /></td><td>310 - 800</td></tr><tr><td style="text-align: center;"><img src="legend/Usagers_assopartenaires_2023_13_80016003.png" /></td><td>800 - 1600</td></tr><tr><td style="text-align: center;"><img src="legend/Usagers_assopartenaires_2023_13_160022304.png" /></td><td>1600 - 2230</td></tr></table>': layer_Usagers_assopartenaires_2023_13,'Tonnage_assos partenaires_ 2023<br /><table><tr><td style="text-align: center;"><img src="legend/Tonnage_assospartenaires_2023_12_2850000.png" /></td><td>28 - 5000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assospartenaires_2023_12_5000150001.png" /></td><td>5000 - 15000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assospartenaires_2023_12_15000350002.png" /></td><td>15000 - 35000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assospartenaires_2023_12_350001050003.png" /></td><td>35000 - 105000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assospartenaires_2023_12_1050001400004.png" /></td><td>105000 - 140000</td></tr></table>': layer_Tonnage_assospartenaires_2023_12,'<img src="legend/Associationspartenaires_BA72_11.png" /> Associations partenaires_BA72': layer_Associationspartenaires_BA72_11,'<img src="legend/RestoduCoeur_10.png" /> Resto du Coeur ': layer_RestoduCoeur_10,'<img src="legend/SecoursCatholique_9.png" /> Secours Catholique': layer_SecoursCatholique_9,'<img src="legend/SecoursPopulaire_8.png" /> Secours Populaire ': layer_SecoursPopulaire_8,'Taux de pauvreté_2020<br /><table><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_52730.png" /></td><td>5,2 - 7,3</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_73951.png" /></td><td>7,3 - 9,5</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_95122.png" /></td><td>9,5 - 12</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_121453.png" /></td><td>12 - 14,5</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_1451744.png" /></td><td>14,5 - 17,4</td></tr></table>': layer_Tauxdepauvret_2020_7,'Risque de précarité alimentaire<br /><table><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_1Trèsbas0.png" /></td><td>1 - Très bas</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_2Bas1.png" /></td><td>2 - Bas</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_3Moyen2.png" /></td><td>3 - Moyen</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_4Elevé3.png" /></td><td>4 - Elevé</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_5Trèsélevé4.png" /></td><td>5 - Très élevé</td></tr></table>': layer_Risquedeprcaritalimentaire_6,'<img src="legend/EPCI_5.png" /> EPCI': layer_EPCI_5,'<img src="legend/Communesdesserviesaidealimentaire_4.png" /> Communes-desservies-aide-alimentaire': layer_Communesdesserviesaidealimentaire_4,'<img src="legend/Communes_3.png" /> Communes': layer_Communes_3,'<img src="legend/Iris_LeMans_2.png" /> Iris_Le Mans': layer_Iris_LeMans_2,'<img src="legend/Dpartement_Sarthe_1.png" /> Département_Sarthe': layer_Dpartement_Sarthe_1,"Google Road": layer_GoogleRoad_0,},{collapsed:false}).addTo(map);
+        L.control.layers(baseMaps,{'Personnes accueillies_assos_2023<br /><table><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_1800.png" /></td><td>1 - 80</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_803101.png" /></td><td>80 - 310</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_3108002.png" /></td><td>310 - 800</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_80016003.png" /></td><td>800 - 1600</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_160022304.png" /></td><td>1600 - 2230</td></tr></table>': layer_Personnesaccueillies_assos_2023_13,'Tonnage_assos_2023<br /><table><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_2850000.png" /></td><td>28 - 5000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_5000150001.png" /></td><td>5000 - 15000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_15000350002.png" /></td><td>15000 - 35000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_350001050003.png" /></td><td>35000 - 105000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_1050001400004.png" /></td><td>105000 - 140000</td></tr></table>': layer_Tonnage_assos_2023_12,'<img src="legend/Associationspartenaires_BA72_11.png" /> Associations partenaires _BA72 ': layer_Associationspartenaires_BA72_11,'<img src="legend/RestoduCoeur_10.png" /> Resto du Coeur ': layer_RestoduCoeur_10,'<img src="legend/SecoursCatholique_9.png" /> Secours Catholique': layer_SecoursCatholique_9,'<img src="legend/SecoursPopulaire_8.png" /> Secours Populaire ': layer_SecoursPopulaire_8,'Taux de pauvreté_2020<br /><table><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_52730.png" /></td><td>5,2 - 7,3</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_73951.png" /></td><td>7,3 - 9,5</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_95122.png" /></td><td>9,5 - 12</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_121453.png" /></td><td>12 - 14,5</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_1451744.png" /></td><td>14,5 - 17,4</td></tr></table>': layer_Tauxdepauvret_2020_7,'Risque de précarité alimentaire<br /><table><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_1Trèsbas0.png" /></td><td>1 - Très bas</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_2Bas1.png" /></td><td>2 - Bas</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_3Moyen2.png" /></td><td>3 - Moyen</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_4Elevé3.png" /></td><td>4 - Elevé</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_5Trèsélevé4.png" /></td><td>5 - Très élevé</td></tr></table>': layer_Risquedeprcaritalimentaire_6,'<img src="legend/EPCI_5.png" /> EPCI': layer_EPCI_5,'<img src="legend/Communes_4.png" /> Communes': layer_Communes_4,'<img src="legend/Communesdesserviesaidealimentaire_3.png" /> Communes-desservies-aide-alimentaire': layer_Communesdesserviesaidealimentaire_3,'<img src="legend/Iris_LeMans_2.png" /> Iris_Le Mans': layer_Iris_LeMans_2,'<img src="legend/Dpartement_Sarthe_1.png" /> Département_Sarthe': layer_Dpartement_Sarthe_1,"Google Road": layer_GoogleRoad_0,},{collapsed:false}).addTo(map);
         setBounds();
         </script>
     </body>
