@@ -43,10 +43,11 @@
         <script src="data/Associationspartenaires_BA72_11.js"></script>
         <script src="data/Tonnage_assos_2023_12.js"></script>
         <script src="data/Personnesaccueillies_assos_2023_13.js"></script>
+        <script src="data/BAs_14.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[47.71661232571238,-0.6617606582828084],[48.48042312587541,1.7140811496977524]]);
+        }).fitBounds([[47.54233957377778,-1.1033687094260491],[48.56165474307152,1.6537106195629891]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -1074,8 +1075,74 @@
             },
         });
         bounds_group.addLayer(layer_Personnesaccueillies_assos_2023_13);
+        function pop_BAs_14(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="REGION"colspan="2"><strong>REGION</strong><br />' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="BANQUES AL"colspan="2"><strong>Nom</strong><br />' + (feature.properties['BANQUES AL'] !== null ? autolinker.link(feature.properties['BANQUES AL'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Email"colspan="2"><strong>Email</strong><br />' + (feature.properties['Email'] !== null ? autolinker.link(feature.properties['Email'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="adresse1"colspan="2"><strong>Adresse</strong><br />' + (feature.properties['adresse1'] !== null ? autolinker.link(feature.properties['adresse1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="adresse2"colspan="2"><strong>adresse2</strong><br />' + (feature.properties['adresse2'] !== null ? autolinker.link(feature.properties['adresse2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="CP"colspan="2"><strong>CP</strong><br />' + (feature.properties['CP'] !== null ? autolinker.link(feature.properties['CP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="ville"colspan="2"><strong>Ville</strong><br />' + (feature.properties['ville'] !== null ? autolinker.link(feature.properties['ville'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Tél"colspan="2"><strong>Tél</strong><br />' + (feature.properties['Tél'] !== null ? autolinker.link(feature.properties['Tél'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_BAs_14_0() {
+            return {
+                pane: 'pane_BAs_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/BAs_14.svg',
+            iconSize: [22.799999999999997, 22.799999999999997]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BAs_14');
+        map.getPane('pane_BAs_14').style.zIndex = 414;
+        map.getPane('pane_BAs_14').style['mix-blend-mode'] = 'normal';
+        var layer_BAs_14 = new L.geoJson(json_BAs_14, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BAs_14',
+            layerName: 'layer_BAs_14',
+            pane: 'pane_BAs_14',
+            onEachFeature: pop_BAs_14,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_BAs_14_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_BAs_14);
+        map.addLayer(layer_BAs_14);
         var baseMaps = {};
-        L.control.layers(baseMaps,{'Personnes accueillies_assos_2023<br /><table><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_1800.png" /></td><td>1 - 80</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_803101.png" /></td><td>80 - 310</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_3108002.png" /></td><td>310 - 800</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_80016003.png" /></td><td>800 - 1600</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_160022304.png" /></td><td>1600 - 2230</td></tr></table>': layer_Personnesaccueillies_assos_2023_13,'Tonnage_assos_2023<br /><table><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_2850000.png" /></td><td>28 - 5000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_5000150001.png" /></td><td>5000 - 15000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_15000350002.png" /></td><td>15000 - 35000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_350001050003.png" /></td><td>35000 - 105000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_1050001400004.png" /></td><td>105000 - 140000</td></tr></table>': layer_Tonnage_assos_2023_12,'<img src="legend/Associationspartenaires_BA72_11.png" /> Associations partenaires _BA72 ': layer_Associationspartenaires_BA72_11,'<img src="legend/RestoduCoeur_10.png" /> Resto du Coeur ': layer_RestoduCoeur_10,'<img src="legend/SecoursCatholique_9.png" /> Secours Catholique': layer_SecoursCatholique_9,'<img src="legend/SecoursPopulaire_8.png" /> Secours Populaire ': layer_SecoursPopulaire_8,'Taux de pauvreté_2020<br /><table><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_52730.png" /></td><td>5,2 - 7,3</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_73951.png" /></td><td>7,3 - 9,5</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_95122.png" /></td><td>9,5 - 12</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_121453.png" /></td><td>12 - 14,5</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_1451744.png" /></td><td>14,5 - 17,4</td></tr></table>': layer_Tauxdepauvret_2020_7,'Risque de précarité alimentaire<br /><table><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_1Trèsbas0.png" /></td><td>1 - Très bas</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_2Bas1.png" /></td><td>2 - Bas</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_3Moyen2.png" /></td><td>3 - Moyen</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_4Elevé3.png" /></td><td>4 - Elevé</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_5Trèsélevé4.png" /></td><td>5 - Très élevé</td></tr></table>': layer_Risquedeprcaritalimentaire_6,'<img src="legend/EPCI_5.png" /> EPCI': layer_EPCI_5,'<img src="legend/Communes_4.png" /> Communes': layer_Communes_4,'<img src="legend/Communesdesserviesaidealimentaire_3.png" /> Communes-desservies-aide-alimentaire': layer_Communesdesserviesaidealimentaire_3,'<img src="legend/Iris_LeMans_2.png" /> Iris_Le Mans': layer_Iris_LeMans_2,'<img src="legend/Dpartement_Sarthe_1.png" /> Département_Sarthe': layer_Dpartement_Sarthe_1,"Google Road": layer_GoogleRoad_0,},{collapsed:false}).addTo(map);
+        L.control.layers(baseMaps,{'<img src="legend/BAs_14.png" /> BAs': layer_BAs_14,'Personnes accueillies_assos_2023<br /><table><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_1800.png" /></td><td>1 - 80</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_803101.png" /></td><td>80 - 310</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_3108002.png" /></td><td>310 - 800</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_80016003.png" /></td><td>800 - 1600</td></tr><tr><td style="text-align: center;"><img src="legend/Personnesaccueillies_assos_2023_13_160022304.png" /></td><td>1600 - 2230</td></tr></table>': layer_Personnesaccueillies_assos_2023_13,'Tonnage_assos_2023<br /><table><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_2850000.png" /></td><td>28 - 5000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_5000150001.png" /></td><td>5000 - 15000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_15000350002.png" /></td><td>15000 - 35000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_350001050003.png" /></td><td>35000 - 105000</td></tr><tr><td style="text-align: center;"><img src="legend/Tonnage_assos_2023_12_1050001400004.png" /></td><td>105000 - 140000</td></tr></table>': layer_Tonnage_assos_2023_12,'<img src="legend/Associationspartenaires_BA72_11.png" /> Associations partenaires _BA72 ': layer_Associationspartenaires_BA72_11,'<img src="legend/RestoduCoeur_10.png" /> Resto du Coeur ': layer_RestoduCoeur_10,'<img src="legend/SecoursCatholique_9.png" /> Secours Catholique': layer_SecoursCatholique_9,'<img src="legend/SecoursPopulaire_8.png" /> Secours Populaire ': layer_SecoursPopulaire_8,'Taux de pauvreté_2020<br /><table><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_52730.png" /></td><td>5,2 - 7,3</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_73951.png" /></td><td>7,3 - 9,5</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_95122.png" /></td><td>9,5 - 12</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_121453.png" /></td><td>12 - 14,5</td></tr><tr><td style="text-align: center;"><img src="legend/Tauxdepauvret_2020_7_1451744.png" /></td><td>14,5 - 17,4</td></tr></table>': layer_Tauxdepauvret_2020_7,'Risque de précarité alimentaire<br /><table><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_1Trèsbas0.png" /></td><td>1 - Très bas</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_2Bas1.png" /></td><td>2 - Bas</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_3Moyen2.png" /></td><td>3 - Moyen</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_4Elevé3.png" /></td><td>4 - Elevé</td></tr><tr><td style="text-align: center;"><img src="legend/Risquedeprcaritalimentaire_6_5Trèsélevé4.png" /></td><td>5 - Très élevé</td></tr></table>': layer_Risquedeprcaritalimentaire_6,'<img src="legend/EPCI_5.png" /> EPCI': layer_EPCI_5,'<img src="legend/Communes_4.png" /> Communes': layer_Communes_4,'<img src="legend/Communesdesserviesaidealimentaire_3.png" /> Communes-desservies-aide-alimentaire': layer_Communesdesserviesaidealimentaire_3,'<img src="legend/Iris_LeMans_2.png" /> Iris_Le Mans': layer_Iris_LeMans_2,'<img src="legend/Dpartement_Sarthe_1.png" /> Département_Sarthe': layer_Dpartement_Sarthe_1,"Google Road": layer_GoogleRoad_0,},{collapsed:false}).addTo(map);
         setBounds();
         </script>
     </body>
